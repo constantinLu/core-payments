@@ -1,4 +1,4 @@
-package com.orange.corepayments;
+package com.orange.corepayments.service;
 
 import com.orange.corepayments.model.Payment;
 import com.orange.corepayments.repository.PaymentRepository;
@@ -17,5 +17,15 @@ public class PaymentService {
 
     public List<Payment> findPayments() {
         return paymentRepository.findAll();
+    }
+
+    //SHOULD BE WITH STATUS AUTHORIZED
+    public Payment authorizePayment(Payment payment) {
+        return paymentRepository.save(payment);
+    }
+
+    //SHOULD BE WITH STATUS CONFIRMED
+    public Payment confirmPayment(Payment payment) {
+        return paymentRepository.updatePaymentStatus(payment.getId(), payment.getPaymentStatus().getId());
     }
 }

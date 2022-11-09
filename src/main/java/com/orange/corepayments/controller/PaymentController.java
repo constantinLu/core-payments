@@ -1,10 +1,10 @@
 package com.orange.corepayments.controller;
 
-import com.orange.corepayments.PaymentService;
+import client.PaymentResponse;
 import com.orange.corepayments.model.Payment;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.orange.corepayments.service.PaymentService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,4 +24,27 @@ public class PaymentController {
     public List<Payment> readPayments() {
         return paymentService.findPayments();
     }
+
+    //TODO: ASYNC -> AUTHORIZATION OPERATION
+    // THIS happens when the trip is picked up by the first driver
+    // rouber -> update request to payments ->
+    // STATUS UPDATED: NONE -> PENDING_AUTHORIZATION -> PENDING_CONFIRMATION -> // TERMINAL: SUCCESS / FAIL
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public PaymentResponse authorizePayment(@RequestBody PaymentResponse paymentRequest) {
+        return new PaymentResponse(paymentService.authorizePayment(paymentRequest.getPayment()));
+    }
+
+
+    //TODO: ASYNC -> CONFIRMATION OPERATION
+    // THIS happens when the trip is picked up by the first driver
+    // rouber -> update request to payments ->
+    //
+    @PutMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public PaymentResponse confirmPayment(@RequestBody PaymentResponse paymentRequest) {
+        return new PaymentResponse(paymentService.confirmPayment(paymentRequest.getPayment()));
+    }
+
 }
