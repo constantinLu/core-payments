@@ -1,7 +1,9 @@
 package com.orange.corepayments.converter;
 
+import com.orange.corepayments.client.CorePaymentDto;
 import com.orange.corepayments.client.PaymentDto;
 import com.orange.corepayments.model.Payment;
+import com.orange.corepayments.model.PaymentStatus;
 
 public class Converter {
 
@@ -10,7 +12,22 @@ public class Converter {
                 .amount(paymentDto.getAmount())
                 .reward(paymentDto.getReward())
                 .reason(paymentDto.getReason().orElse(null))
-                .paymentStatus(paymentDto.getPaymentStatus())
+                .requestId(paymentDto.getRequestId())
+                .paymentStatus(PaymentStatus.builder()
+                        .type(paymentDto.getPaymentStatus())
+                        .build())
+                .build();
+    }
+
+    public static Payment toPayment(CorePaymentDto paymentDto) {
+        return Payment.builder()
+                .amount(paymentDto.getAmount())
+                .reward(paymentDto.getReward())
+                .reason(paymentDto.getReason().orElse(null))
+                .requestId(paymentDto.getRequestId())
+                .paymentStatus(PaymentStatus.builder()
+                        .type(paymentDto.getPaymentStatus())
+                        .build())
                 .build();
     }
 
@@ -19,7 +36,10 @@ public class Converter {
                 .amount(payment.getAmount())
                 .reward(payment.getReward())
                 .reason(payment.getReason())
-                .paymentStatus(payment.getPaymentStatus())
+                .requestId(payment.getRequestId())
+                .paymentStatus(payment.getPaymentStatus().getType())
+                .createdDate(payment.getCreatedDate())
+                .updatedDate(payment.getUpdatedDate())
                 .build();
     }
 }

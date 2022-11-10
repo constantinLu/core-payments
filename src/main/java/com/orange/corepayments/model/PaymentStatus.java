@@ -1,11 +1,12 @@
 package com.orange.corepayments.model;
 
+import com.orange.corepayments.client.PaymentStatusType;
 import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import javax.persistence.Table;
-import java.io.Serializable;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -18,18 +19,7 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "payments_status")
 public class PaymentStatus {
 
-    public enum Id implements Serializable {
-        UNPROCESSED,
-        PENDING_AUTHORIZATION,
-        PENDING_CONFIRMATION,
-        SUCCEEDED,
-        FAILED;
-    }
-
-
-    @javax.persistence.Id
-    private Long id;
-
+    @Id
     @Enumerated(STRING)
-    private Id name;
+    private PaymentStatusType type;
 }

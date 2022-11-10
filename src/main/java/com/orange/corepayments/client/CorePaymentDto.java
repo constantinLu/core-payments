@@ -1,10 +1,8 @@
 package com.orange.corepayments.client;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -14,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Builder
-public class PaymentDto {
+public class CorePaymentDto implements Serializable {
 
     private BigDecimal amount;
 
