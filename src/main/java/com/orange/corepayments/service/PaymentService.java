@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.orange.corepayments.model.PaymentStatus.Id.PENDING_AUTHORIZATION;
+
 @Service
 public class PaymentService {
 
@@ -19,13 +21,13 @@ public class PaymentService {
         return paymentRepository.findAll();
     }
 
-    //SHOULD BE WITH STATUS AUTHORIZED
     public Payment authorizePayment(Payment payment) {
+        assert payment.getPaymentStatus().getName().name().equals(PENDING_AUTHORIZATION.name());
         return paymentRepository.save(payment);
     }
 
-    //SHOULD BE WITH STATUS CONFIRMED
     public Payment confirmPayment(Payment payment) {
-        return paymentRepository.updatePaymentStatus(payment.getId(), payment.getPaymentStatus().getId());
+        payment.setPaymentStatus(payment.getPaymentStatus());
+        return paymentRepository.save(payment);
     }
 }

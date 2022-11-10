@@ -1,12 +1,16 @@
 package com.orange.corepayments.controller;
 
-import client.PaymentResponse;
+import com.orange.corepayments.client.PaymentDto;
 import com.orange.corepayments.model.Payment;
+import com.orange.corepayments.model.PaymentStatus;
 import com.orange.corepayments.service.PaymentService;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ValidationException;
 import java.util.List;
+
+import static com.orange.corepayments.converter.Converter.toPayment;
+import static com.orange.corepayments.converter.Converter.toPaymentDto;
 
 @RestController
 @RequestMapping("/payments")
@@ -31,9 +35,19 @@ public class PaymentController {
     // STATUS UPDATED: NONE -> PENDING_AUTHORIZATION -> PENDING_CONFIRMATION -> // TERMINAL: SUCCESS / FAIL
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public PaymentResponse authorizePayment(@RequestBody PaymentResponse paymentRequest) {
-        return new PaymentResponse(paymentService.authorizePayment(paymentRequest.getPayment()));
+    public PaymentDto processPayment(@RequestBody PaymentDto paymentRequest) {
+        switch (paymentRequest.getPaymentStatus().getName()) {
+            case PENDING_AUTHORIZATION:
+                final var authorizePayment = paymentService.authorizePayment(toPayment(paymentRequest));
+                return toPaymentDto(authorizePayment);
+            case PENDING_CONFIRMATION:
+                final var confirmedPayment = paymentService.confirmPayment(toPayment(paymentRequest));
+                return toPaymentDto(confirmedPayment);
+            case SUCCEEDED:
+            case FAILED:
+            default:
+                throw new ValidationException("Payment with id: {} cannot be processed");
+        }
     }
 
 
@@ -42,9 +56,8 @@ public class PaymentController {
     // rouber -> update request to payments ->
     //
     @PutMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public PaymentResponse confirmPayment(@RequestBody PaymentResponse paymentRequest) {
-        return new PaymentResponse(paymentService.confirmPayment(paymentRequest.getPayment()));
+    public PaymentDto confirmPayment(@RequestBody PaymentDto paymentRequest) {
+        final var payment = paymentService.confirmPayment(toPayment(paymentRequest));
+        return toPaymentDto(payment);
     }
-
 }
