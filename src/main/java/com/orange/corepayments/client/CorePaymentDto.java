@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Builder
-public class CorePaymentDto implements Serializable {
+public class CorePaymentDto {
 
     private BigDecimal amount;
 

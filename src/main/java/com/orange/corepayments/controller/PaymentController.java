@@ -1,18 +1,20 @@
 package com.orange.corepayments.controller;
 
 import com.orange.corepayments.client.CorePaymentDto;
+import com.orange.corepayments.client.CorePaymentResponse;
 import com.orange.corepayments.client.PaymentDto;
-import com.orange.corepayments.model.Payment;
 import com.orange.corepayments.service.PaymentService;
+import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.orange.corepayments.client.PaymentStatusType.PENDING_AUTHORIZATION;
 import static com.orange.corepayments.client.PaymentStatusType.UNPROCESSED;
-import static com.orange.corepayments.converter.Converter.toPayment;
-import static com.orange.corepayments.converter.Converter.toPaymentDto;
+import static com.orange.corepayments.converter.Converter.*;
 
 @RestController
 @RequestMapping("/payments")
@@ -24,9 +26,20 @@ public class PaymentController {
         this.paymentService = paymentService;
     }
 
-    @GetMapping()
-    public List<Payment> readPayments() {
-        return paymentService.findPayments();
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public CorePaymentResponse readPayments(@RequestParam List<String> requestIds) {
+        final var uuids = requestIds.stream()
+                .map(r -> {
+                    var uid = r.replace("[", "").replace("]", "");
+                    return UUID.fromString(uid);
+                })
+                .collect(Collectors.toList());
+
+
+        final var payments = paymentService.findPayments(uuids);
+        return CorePaymentResponse.builder()
+                .payments(toCorePaymentDtos(payments))
+                .build();
     }
 
     @PostMapping

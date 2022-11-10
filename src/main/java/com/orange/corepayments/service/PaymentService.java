@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.UUID;
 
 import static com.orange.corepayments.client.PaymentStatusType.PENDING_AUTHORIZATION;
 import static com.orange.corepayments.client.PaymentStatusType.UNPROCESSED;
@@ -19,8 +20,8 @@ public class PaymentService {
         this.paymentRepository = paymentRepository;
     }
 
-    public List<Payment> findPayments() {
-        return paymentRepository.findAll();
+    public List<Payment> findPayments(List<UUID> requestIds) {
+        return paymentRepository.findByRequestIdIn(requestIds);
     }
 
     public Payment authorizePayment(Payment incomingPayment) {
