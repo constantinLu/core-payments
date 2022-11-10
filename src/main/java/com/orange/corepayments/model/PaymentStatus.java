@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.Table;
-import java.util.UUID;
+import java.io.Serializable;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -18,7 +18,7 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "payments_status")
 public class PaymentStatus {
 
-    public enum Id {
+    public enum Id implements Serializable {
         UNPROCESSED,
         PENDING_AUTHORIZATION,
         PENDING_CONFIRMATION,
