@@ -8,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,6 +65,7 @@ public class PaymentController {
             @ApiResponse(code = 404, message = "Data not found"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
+    @Async
     @PostMapping
     public PaymentDto authorizePayment(@RequestBody CorePaymentDto paymentRequest) {
         Assert.isTrue(paymentRequest.getPaymentStatus().equals(UNPROCESSED), "Payment can only be UNPROCESSED");
@@ -81,6 +83,7 @@ public class PaymentController {
             @ApiResponse(code = 404, message = "Data not found"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
+    @Async
     @PutMapping
     public PaymentDto confirmPayment(@RequestBody PaymentDto paymentRequest) {
         Assert.isTrue(paymentRequest.getPaymentStatus().equals(PENDING_AUTHORIZATION), "Payment can only be CONFIRMED");
